@@ -1,14 +1,3 @@
-"""
-app.py
-Application entry point. Uses the Flask "application factory" pattern
-so the app can be configured differently for development, testing,
-and production, and so blueprints/models can be registered cleanly
-without circular imports.
-
-Run with:
-    python app.py
-"""
-
 import os
 
 from flask import Flask, render_template
@@ -68,12 +57,6 @@ def create_app(config_name=None):
     login_manager.login_message_category = "warning"
 
     ensure_database_schema(app)
-
-    # --- Deferred imports ---
-    # models.py and routes.py are imported here, inside the factory, rather
-    # than at the top of this file. By the time this line runs, `db` above
-    # has already been fully defined at module scope, so models.py's
-    # `from app import db` resolves without a circular-import error.
     with app.app_context():
         from models import User  # noqa: F401  (registers the model with SQLAlchemy)
         from routes import auth_bp, main_bp
